@@ -12,7 +12,6 @@ this.config = JSON.parse(readFileSync(READ_PATH))
 export const Config: Config = this.config ?? {
     oauth: "",
     server_id: "",
-    files_on_page: 10,
     keymap: {
         quit: "q",
         upload: "u",

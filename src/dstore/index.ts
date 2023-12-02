@@ -18,8 +18,9 @@ export default class DStore {
     channel: TextChannel;
 
     getPage(page: number): File[] {
+        const files_on_page = process.stdout.rows - 2
         const arr: File[] = [];
-        for (let i = page * Config.files_on_page; i < Math.min((page + 1) * Config.files_on_page, this.files.length); i++) {
+        for (let i = page * files_on_page; i < Math.min((page + 1) * files_on_page, this.files.length); i++) {
             arr.push(this.files[i])
         }
         return arr;
@@ -36,7 +37,6 @@ export default class DStore {
         const handleFile = async (file: FileOwner & FileChunk, msg: Message) => {
             if (file.chunk_id == 0) {
                 if (cache[file.id] !== undefined) return;
-                console.log("adding", file)
                 cache[file.id] = this.files.push({
                     chunks: [file.id],
                     name: file.name,
@@ -63,7 +63,6 @@ export default class DStore {
             const file = Parse<FileOwner & FileChunk>(msg.content, msg.id);
             if (!file) return;
             await handleFile(file, msg);
-            console.log(cache)
         })
     }
 

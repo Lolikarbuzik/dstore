@@ -42,8 +42,6 @@ export default class DStore_UI {
 
 
         gui.on("keypressed", async (key) => {
-            console.clear()
-            console.log(JSON.stringify(key))
             switch (key.name) {
                 case Config.keymap.quit:
                     new ConfirmPopup({
@@ -124,12 +122,12 @@ export default class DStore_UI {
                 case Config.keymap.page_up:
                     this.page--
                     if (this.page < 0) {
-                        this.page = Math.floor(this.dstore.files.length / Config.files_on_page)
+                        this.page = Math.floor(this.dstore.files.length / process.stdout.rows - 2)
                     }
                     refresh()
                     break
                 case Config.keymap.page_down:
-                    this.page = (this.page + 1) % (Math.ceil(this.dstore.files.length / Config.files_on_page))
+                    this.page = (this.page + 1) % (Math.ceil(this.dstore.files.length / process.stdout.rows - 2))
                     refresh()
                     break
                 default:
@@ -162,15 +160,11 @@ export default class DStore_UI {
                     })
                 })
             }
-            // file_page.addSpacer(Math.max(9 - files.length, 0))
-            // file_page.addRow({
-            //     text: `Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / Config.files_on_page), 1)}`
-            // })
             gui.refresh()
         }
 
         while (true) {
-            gui.setPage(file_page, 0, `DSTORE - Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / Config.files_on_page), 1)}`)
+            gui.setPage(file_page, 0, `DSTORE - Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / process.stdout.rows - 2), 1)}`)
             await refresh()
             await Sleep(3000)
             await this.dstore.refreshFiles()

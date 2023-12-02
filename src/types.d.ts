@@ -1,7 +1,6 @@
 interface Config {
     channel_id: string
     oauth: string,
-    files_on_page: number,
     keymap: {
         quit: string,
         upload: string,
