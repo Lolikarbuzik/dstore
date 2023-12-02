@@ -25,7 +25,8 @@ export default class DStore_UI {
             layoutOptions: {
                 type: "single",
                 showTitle: true,
-                boxed: true
+                boxed: true,
+                fitHeight: true
             },
             enableMouse: true,
             logLocation: "popup"
@@ -161,15 +162,15 @@ export default class DStore_UI {
                     })
                 })
             }
-            file_page.addSpacer(Math.max(8 - files.length, 0))
-            file_page.addRow({
-                text: `Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / Config.files_on_page), 1)}`
-            })
+            // file_page.addSpacer(Math.max(9 - files.length, 0))
+            // file_page.addRow({
+            //     text: `Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / Config.files_on_page), 1)}`
+            // })
             gui.refresh()
         }
 
-        gui.setPage(file_page, 0, "DSTORE")
         while (true) {
+            gui.setPage(file_page, 0, `DSTORE - Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / Config.files_on_page), 1)}`)
             await refresh()
             await Sleep(3000)
             await this.dstore.refreshFiles()
