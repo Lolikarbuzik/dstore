@@ -9,8 +9,8 @@
 ## Installation
 
 ```bash
-$ git clone https://github.com/Lolikarbuzik/dstore.git
-$ npm install
+git clone https://github.com/Lolikarbuzik/dstore.git
+npm install
 ```
 
 To start the cli you can build the project using `npm run build` or use `ts-node .`
