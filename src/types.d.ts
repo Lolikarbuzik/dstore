@@ -9,7 +9,8 @@ interface Config {
         file_up: string,
         file_down: string,
         page_up: string,
-        page_down: string
+        page_down: string,
+        delete_page: string
     }
 }
 

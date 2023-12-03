@@ -6,10 +6,10 @@ const CONFIG_PATH = projectDirs.config(PROJECT_ID)
 if (!CONFIG_PATH) throw Error(`Couldn't get config path for ${PROJECT_ID}`)
 const READ_PATH = CONFIG_PATH + "\\config.json";
 //@ts-ignore
-this.config = JSON.parse(readFileSync(READ_PATH))
+global.config = JSON.parse(readFileSync(READ_PATH))
 
 //@ts-ignore
-export const Config: Config = this.config ?? {
+export const Config: Config = global.config ?? {
     oauth: "",
     server_id: "",
     keymap: {
@@ -20,6 +20,7 @@ export const Config: Config = this.config ?? {
         file_up: "w",
         file_down: "s",
         page_up: "up",
-        page_down: "down"
+        page_down: "down",
+        delete_page: "l"
     }
 }

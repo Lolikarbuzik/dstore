@@ -2,7 +2,7 @@
     "compilerOptions": {
         // "target": "ESNext",
         "types": ["./src/types.d.ts"],
-        "outDir": "./out",
+        "outDir": "./build",
         "removeComments": true,
 
         "esModuleInterop": true,

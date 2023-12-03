@@ -4,8 +4,13 @@ import DStore from "./index";
 import Sleep from "../util/sleep";
 import { readFileSync, writeFileSync } from "node:fs"
 import Parse from "./parser";
-
-const FILE_SIZE = 1000
+function formatBytes(bytes: number) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
 
 export default class DStore_UI {
     page = 0;
@@ -29,7 +34,6 @@ export default class DStore_UI {
                 fitHeight: true
             },
             enableMouse: true,
-            logLocation: "popup"
         }
 
         const gui = new ConsoleManager(opt);
@@ -47,6 +51,18 @@ export default class DStore_UI {
                     new ConfirmPopup({
                         id: "popupQuit", title: "Are you sure you want to quit?"
                     }).show().on("confirm", () => close_app())
+                    break
+                case Config.keymap.delete_page:
+                    new ConfirmPopup({
+                        id: "deletepagePopup", title: `Are you sure you want to delete this page?`
+                    }).show().on("confirm", async () => {
+                        for (let i = 0; i < files.length; i++) {
+                            let file = files[i]
+                            this.dstore.deleteFile(file)
+                        }
+                    })
+                    this.dstore.refreshFiles();
+                    refresh()
                     break
                 case Config.keymap.upload:
                     new FileSelectorPopup({
@@ -73,37 +89,26 @@ export default class DStore_UI {
                     new ConfirmPopup({
                         id: "deletePopup", title: `Are you sure you want to delete '${file.name}'?`
                     }).show().on("confirm", async () => {
-                        for (let i = 0; i < file.chunks.length; i++) {
-                            const chunk_id = file.chunks[i];
-                            (await this.dstore.channel.messages.fetch(chunk_id)).delete()
-                        }
+                        this.dstore.deleteFile(file)
                     })
                     await this.dstore.refreshFiles()
                     if (this.file > files.length - 1) {
                         this.file = files.length - 2
                     }
+                    this.dstore.refreshFiles();
                     refresh()
                     break
                 case Config.keymap.download:
                     let getfile = files[this.file];
                     if (!getfile) break;
 
-                    let content = "";
-
-                    for (let i = 0; i < getfile.chunks.length; i++) {
-                        const chunk_id = getfile.chunks[i];
-                        const msg = (await this.dstore.channel.messages.fetch(chunk_id))
-                        const parsed = Parse(msg.content, msg.id);
-                        content += parsed?.chunk;
-                    }
-
                     new InputPopup({
                         id: "namePopup",
                         title: "Save as... (leave empty to quit)",
                         value: "",
-                    }).show().on("confirm", (value: string) => {
+                    }).show().on("confirm", async (value: string) => {
                         if (value == "") return;
-                        writeFileSync(value, content);
+                        writeFileSync(value, await this.dstore.getFile(getfile));
                     })
 
                     refresh()
@@ -147,14 +152,8 @@ export default class DStore_UI {
                 })
             } else {
                 files.forEach((file, i) => {
-                    let size = (file.size / FILE_SIZE);
-                    let ext = "mb"
-                    if (size > FILE_SIZE / 10) {
-                        size = size / FILE_SIZE
-                        ext = "gb"
-                    }
                     file_page.addRow({
-                        text: `${file.name} (${size.toString()}${ext})`,
+                        text: `${file.name} (${formatBytes(file.size)})`,
                         color: "white",
                         bg: i === this.file ? "bgCyan" : undefined
                     })
