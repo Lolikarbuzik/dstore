@@ -23,5 +23,6 @@ export const Config: Config = global.config ?? {
         page_previous: "up",
         page_next: "down",
         delete_page: "l"
-    }
+    },
+    keys: [],
 } as Config

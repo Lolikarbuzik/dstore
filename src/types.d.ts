@@ -1,5 +1,7 @@
-type globalThis = {
-    config: Config
+type EncryptionKey = {
+    key: string,
+    name: string,
+    encryption: string
 }
 interface Config {
     channel_id: string
@@ -14,7 +16,9 @@ interface Config {
         page_previous: string,
         page_next: string,
         delete_page: string
-    }
+    },
+    keys: EncryptionKey[],
+    encryption: string
 }
 
 // FILEOWNER STRUCTURE

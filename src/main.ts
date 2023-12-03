@@ -13,9 +13,10 @@ client.on('ready', async (_) => {
     const dstore = new DStore(client)
 
     // TESTS
-    // await dstore.uploadFile("H".repeat(1024 * 1024 * 25), "test.txt", false)
+    // await dstore.uploadFile("H".repeat(1024 * 1024), "test.txt", Config.keys[0] as EncryptionKey)
     // await dstore.refreshFiles()
     // const files = dstore.files;
+
     // if (!files[0]) return;
     // writeFileSync("test.txt", await dstore.getFile(files[0]));
     // dstore.deleteFile(files[0])

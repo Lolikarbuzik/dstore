@@ -1,9 +1,10 @@
-import { Box, ConfirmPopup, ConsoleGuiOptions, ConsoleManager, FileSelectorPopup, InPageWidgetBuilder, InputPopup, PageBuilder, Progress } from "console-gui-tools";
+import { Box, ConfirmPopup, ConsoleGuiOptions, ConsoleManager, FileSelectorPopup, InPageWidgetBuilder, InputPopup, OptionPopup, PageBuilder, Progress } from "console-gui-tools";
 import { Config } from "./config";
 import DStore from "./index";
 import Sleep from "../util/sleep";
 import { readFileSync, writeFileSync } from "node:fs"
-import Parse from "./parser";
+import { gzipSync, unzipSync } from "node:zlib"
+
 function formatBytes(bytes: number) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -22,7 +23,7 @@ export default class DStore_UI {
     }
 
     getPageCount() {
-        return Math.ceil(this.dstore.files.length / (process.stdout.rows - 2))
+        return Math.max(Math.ceil(this.dstore.files.length / (process.stdout.rows - 2)), 1)
     }
 
     async render() {
@@ -80,7 +81,15 @@ export default class DStore_UI {
                             if (!buffer) {
                                 return;
                             }
-                            this.dstore.uploadFile(buffer, file.name, false);
+                            new OptionPopup({
+                                id: "encryptionKeyPopup", title: "Select encryption key",
+                                selected: "<none>",
+                                options: Config.keys.map(v => v.name).concat("<none>")
+                            }).show().on("confirm", (opt: string) => {
+                                let key = Config.keys.find((v) => v.name == opt);
+                                this.dstore.uploadFile(buffer, file.name, key);
+                            })
+
                         })
                     })
                     await this.dstore.refreshFiles()
