@@ -10,6 +10,7 @@
 
 ```bash
 git clone https://github.com/Lolikarbuzik/dstore.git
+cd dstore
 npm install
 ```
 
