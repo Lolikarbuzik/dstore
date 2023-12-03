@@ -1,3 +1,6 @@
+type globalThis = {
+    config: Config
+}
 interface Config {
     channel_id: string
     oauth: string,
@@ -8,8 +11,8 @@ interface Config {
         download: string,
         file_up: string,
         file_down: string,
-        page_up: string,
-        page_down: string,
+        page_previous: string,
+        page_next: string,
         delete_page: string
     }
 }

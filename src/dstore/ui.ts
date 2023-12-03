@@ -21,6 +21,9 @@ export default class DStore_UI {
         this.render();
     }
 
+    getPageCount() {
+        return Math.ceil(this.dstore.files.length / (process.stdout.rows - 2))
+    }
 
     async render() {
         await this.dstore.refreshFiles()
@@ -124,15 +127,15 @@ export default class DStore_UI {
                     this.file = (this.file + 1) % files.length
                     refresh()
                     break
-                case Config.keymap.page_up:
+                case Config.keymap.page_previous:
                     this.page--
                     if (this.page < 0) {
-                        this.page = Math.floor(this.dstore.files.length / process.stdout.rows - 2)
+                        this.page = this.getPageCount() - 1
                     }
                     refresh()
                     break
-                case Config.keymap.page_down:
-                    this.page = (this.page + 1) % (Math.ceil(this.dstore.files.length / process.stdout.rows - 2))
+                case Config.keymap.page_next:
+                    this.page = (this.page + 1) % this.getPageCount()
                     refresh()
                     break
                 default:
@@ -160,10 +163,10 @@ export default class DStore_UI {
                 })
             }
             gui.refresh()
+            gui.setPage(file_page, 0, `DSTORE - Page ${(this.page + 1).toString()}/${this.getPageCount()}`)
         }
 
         while (true) {
-            gui.setPage(file_page, 0, `DSTORE - Page ${this.page + 1}/${Math.max(Math.ceil(this.dstore.files.length / process.stdout.rows - 2), 1)}`)
             await refresh()
             await Sleep(3000)
             await this.dstore.refreshFiles()
